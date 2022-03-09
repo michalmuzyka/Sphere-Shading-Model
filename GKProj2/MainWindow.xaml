@@ -1,0 +1,192 @@
+﻿<Window x:Class="GKProj2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GKProj2"
+        mc:Ignorable="d"
+        Title="Symulacja kuli"  MinHeight="999" MinWidth="1360" WindowStartupLocation="CenterScreen" Background="#282828" ResizeMode="NoResize">
+
+        <Window.Resources>
+            <SolidColorBrush x:Key="secondaryColor" Color="#505050"/>
+            <SolidColorBrush x:Key="primaryColor" Color="#282828" />
+            <SolidColorBrush x:Key="elementColor" Color="#A2A2A2" />
+            <SolidColorBrush x:Key="pressedColor" Color="#202020" />
+
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="BorderBrush" Value="{StaticResource secondaryColor}"/>
+                <Setter Property="BorderThickness" Value="0.1"/>
+            </Style>
+
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="{x:Type RadioButton}">
+                <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+
+            <Style TargetType="{x:Type CheckBox}">
+                <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+
+            <Style TargetType="{x:Type GroupBox}">
+                <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="BorderBrush" Value="{StaticResource secondaryColor}"/>
+                <Setter Property="BorderThickness" Value="0.1"/>
+            </Style>
+
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="{StaticResource primaryColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border BorderThickness="2" BorderBrush="{StaticResource secondaryColor}">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3"/>
+                                </Border>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource secondaryColor}"/>
+                    </Trigger>
+
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{StaticResource pressedColor}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="960"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Margin="10" Padding="10 2 10 10" BorderThickness="2">
+            <StackPanel>
+                <GroupBox Header="Siatka">
+                    <StackPanel>
+                        <TextBlock Margin="10 0 10 0"> Dokładność triangulacji: </TextBlock>
+                        <Slider Name="triangulationAccuracy" Minimum="1" Value="3"  Maximum="6" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="1" ValueChanged="triangulationAccuracy_ValueChanged" SmallChange="1" IsSnapToTickEnabled="True"/>
+                        <TextBlock Margin="10 0 10 0"> Promień kuli:</TextBlock>
+                        <Slider Name="hemisphereR" Minimum="1" Value="183"  Maximum="457" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="20" ValueChanged="hemisphereR_ValueChanged" SmallChange="1" IsSnapToTickEnabled="True"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.5*"/>
+                                <ColumnDefinition Width="0.5*"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Margin="25 5 0 5" Name="meshCheckbox" IsChecked="False" Click="MeshCheckbox_OnChecked">Rysuj siatkę</CheckBox>
+                            <CheckBox Grid.Column="1" Margin="0 5 0 5" Name="parallelCheckbox" IsChecked="True" Click="ParallelCheckbox_OnChecked">Rysowanie równoległe</CheckBox>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Kolor obiektu">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.2*"/>
+                                <ColumnDefinition Width="0.3*"/>
+                                <ColumnDefinition Width="0.3*"/>
+                            </Grid.ColumnDefinitions>
+                            <RadioButton IsChecked="True" Margin="10 12 0 0" Name="RadioFromSelectedColor" GroupName="objectColor" Click="RadioFromSelectedColor_Clicked" >Stały</RadioButton>
+                            <Button Grid.Column="1" Margin="0 5 0 0"  Click="ButtonSelectColor_Clicked" > Wybierz kolor </Button>
+                            <Border Grid.Column="2" Height="20" BorderThickness="2" Padding="1" Margin="20 5 32 0">
+                                <Rectangle Name="SphereColor"/>
+                            </Border>
+                            <RadioButton Grid.Row="1" Margin="10 13 10 10" Name="RadioFromTexture" GroupName="objectColor" Click="RadioFromTexture_Clicked" >Z tekstury</RadioButton>
+                            <Button Grid.Row="1" Grid.Column="1" Margin="0 8 0 5"  Click="ButtonSelectTexture_Clicked" >Wczytaj teksturę</Button>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Kolor oświetlenia">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.25*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Margin="10 15 0 10" BorderThickness="2">
+                            <CheckBox Margin="2 4 0 2" Name="spiralLightCheckbox" IsChecked="True" Click="spiralLightCheckbox_OnChecked">Włącz</CheckBox>
+                        </Border>
+                        <Button Grid.Column="1" Margin="10 15 0 10"  Click="ButtonSelectLightColor_Clicked" >Wybierz kolor</Button>
+                        <Border Grid.Column="2" Height="20" BorderThickness="2" Padding="1" Margin="20 5 32 0">
+                            <Rectangle Name="LightColor"/>
+                        </Border>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Animacja oświetlenia">
+                    <StackPanel>
+                        <TextBlock Margin="10 10 10 0"> Współrzędna Z płaszczyzny:</TextBlock>
+                        <Slider Name="ZCordSlider" Minimum="200" Value="687"  Maximum="1374" Margin="20 0" IsMoveToPointEnabled="True" TickFrequency="1" ValueChanged="ZCordSlider_OnValueChanged_ValueChanged" SmallChange="1" IsSnapToTickEnabled="True"/>
+                        <Button Margin="20 5 18 10" Name="StartStopAnimation" Click="ButtonStartStopAnimation_Clicked" >Zatrzymaj animację</Button>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Wektory normalne">
+                    <StackPanel>
+                        <RadioButton IsChecked="True" Margin="10 12 0 0" Name="RadioDefaultNormals" GroupName="normalVectors" Click="RadioDefaultNormals_Clicked" >Bez mapy normalnych</RadioButton>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.4*"/>
+                                <ColumnDefinition Width="0.4*"/>
+                                <ColumnDefinition Width="0.2*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <RadioButton Margin="10 13 0 10" Name="RadioNormalsFromTexture" GroupName="normalVectors" Click="RadioNormalsFromTexture_Clicked" >Z mapy normalnych</RadioButton>
+                            <Button Grid.Column="1" Margin="10 8 0 5"  Click="ButtonSelectNormalMap_Clicked" >Wczytaj mapę</Button>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Model kolorowania">
+                    <StackPanel>
+                        <RadioButton IsChecked="True" Margin="10 12 0 0" Name="RadioPhong" GroupName="shading" Click="RadioPhong_Clicked" >Dokładny</RadioButton>
+                        <RadioButton Margin="10 10 0 5" Name="RadioGouraud" GroupName="shading" Click="RadioGouraud_Clicked" >Interpolacyjny </RadioButton>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Modyfikatory kolorowania trójkątów">
+                    <StackPanel>
+                        <TextBlock Margin="10 0 10 0"> Składowa zwierciadlana: </TextBlock>
+                        <Slider Name="KsSlider" Minimum="0" Value="0.5"  Maximum="1" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="0.01" ValueChanged="SliderKs_ValueChanged" SmallChange="0.01" IsSnapToTickEnabled="True"/>
+                        <TextBlock Margin="10 0 10 0"> Składowa rozproszona: </TextBlock>
+                        <Slider Name="KdSlider" Minimum="0" Value="0.5"  Maximum="1" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="0.01" ValueChanged="SliderKd_ValueChanged" SmallChange="0.01" IsSnapToTickEnabled="True"/>
+                        <TextBlock Margin="10 0 10 0"> Współczynnik zwierciadlaności trójkąta:</TextBlock>
+                        <Slider Name="MSlider" Minimum="1" Value="50"  Maximum="100" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="1" ValueChanged="SliderM_ValueChanged" SmallChange="1" IsSnapToTickEnabled="True"/>
+                        <TextBlock Margin="10 0 10 0"> Waga wektorów normalnych kuli: </TextBlock>
+                        <Slider Name="KnmvSlider" Minimum="0" Value="0.5"  Maximum="1" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="0.01" ValueChanged="SliderKnvm_ValueChanged" SmallChange="0.01" IsSnapToTickEnabled="True"/>
+                        <TextBlock Margin="10 0 10 0"> Wysokość reflektorów:</TextBlock>
+                        <Slider Name="HSlider" Minimum="0" Value="458"  Maximum="1200" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="0.01" ValueChanged="SliderH_ValueChanged" SmallChange="10" IsSnapToTickEnabled="True"/>
+                        <TextBlock Margin="10 0 10 0"> Współczynnik m reflektorów:</TextBlock>
+                        <Slider Name="MrSlider" Minimum="1" Value="2"  Maximum="50" Margin="20 5" IsMoveToPointEnabled="True" TickFrequency="1" ValueChanged="SliderMr_ValueChanged" SmallChange="1" IsSnapToTickEnabled="True"/>
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Margin="10" Padding="10" BorderThickness="2">
+            <Canvas Name="mainCanvas" ForceCursor="True" Cursor="Pen" Background="White" MouseLeftButtonDown="mainCanvas_MouseLeftButtonDown" MouseLeftButtonUp="mainCanvas_MouseLeftButtonUp" MouseMove="mainCanvas_MouseMove" />
+        </Border>
+    </Grid>
+</Window>

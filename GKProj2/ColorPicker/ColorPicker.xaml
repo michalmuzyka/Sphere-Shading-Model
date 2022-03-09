@@ -1,0 +1,115 @@
+﻿<Window x:Class="GKProj2.ColorPicker.ColorPicker"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GKProj2.ColorPicker"
+        mc:Ignorable="d"
+        Title="Wybierz kolor" Height="430" Width="400" WindowStartupLocation="CenterScreen" Background="#282828" ResizeMode="NoResize">
+    <Window.Resources>
+        <SolidColorBrush x:Key="secondaryColor" Color="#505050"/>
+        <SolidColorBrush x:Key="primaryColor" Color="#282828" />
+        <SolidColorBrush x:Key="elementColor" Color="#A2A2A2" />
+        <SolidColorBrush x:Key="pressedColor" Color="#202020" />
+        <local:SlidersToColorConverter x:Key="sliderToColorConverter" />
+
+        <Style TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="{StaticResource secondaryColor}"/>
+            <Setter Property="BorderThickness" Value="0.1"/>
+        </Style>
+
+        <Style x:Key="colorSliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="255" />
+            <Setter Property="SmallChange" Value="1" />
+            <Setter Property="TickFrequency" Value="1" />
+            <Setter Property="IsSnapToTickEnabled" Value="True" />
+            <Setter Property="IsMoveToPointEnabled" Value="True" />
+            <Setter Property="Margin" Value="5,0" />
+        </Style >
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource primaryColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border BorderThickness="2" BorderBrush="{TemplateBinding BorderBrush}">
+                            <Border Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="7"/>
+                            </Border>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource secondaryColor}"/>
+                </Trigger>
+
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{StaticResource pressedColor}"/>
+                </Trigger>
+
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="LightSkyBlue"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Background" Value="{StaticResource primaryColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{StaticResource primaryColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource elementColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Border BorderThickness="2" Padding="5" Margin="0,0,0,1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.ColumnSpan="3" Margin="0 0 0 10" FontSize="20" TextAlignment="Center">Wybierz kolor</TextBlock>
+                <TextBlock Grid.Row="1">Red</TextBlock>
+                <Slider Name="redSlider" Grid.Row="1" Grid.Column="1" Value="0"  Style="{StaticResource colorSliderStyle}" />
+                <TextBox Margin="0 0 0 5"  Grid.Row="1" Grid.Column="2" TextAlignment="Center" Text="{Binding ElementName=redSlider ,Path=Value ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Row="2" Grid.Column="0">Green</TextBlock >
+                <Slider Name="greenSlider" Grid.Row="2" Grid.Column="1" Value="0" Style="{StaticResource colorSliderStyle}"/>
+                <TextBox Margin="0 0 0 5" Grid.Row="2" Grid.Column="2" TextAlignment="Center" Text="{Binding ElementName=greenSlider ,Path=Value ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Grid.Row="3" Grid.Column="0">Blue</TextBlock >
+                <Slider Name="blueSlider" Grid.Row="3" Grid.Column="1" Value="0" Style="{StaticResource colorSliderStyle}"/>
+                <TextBox Margin="0 0 0 5" Grid.Row="3" Grid.Column="2" TextAlignment="Center" Text="{Binding ElementName=blueSlider ,Path=Value ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Border BorderThickness="2" Margin="10" Grid.Row="4" Grid.Column="1" >
+                    <Rectangle Margin="10">
+                        <Rectangle.Fill>
+                            <MultiBinding Converter="{StaticResource sliderToColorConverter}" Mode="OneWay">
+                                <Binding ElementName="redSlider" Path="Value" />
+                                <Binding ElementName="greenSlider" Path="Value" />
+                                <Binding ElementName="blueSlider" Path="Value" />
+                            </MultiBinding >
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Border>
+                <Button Grid.Row="5" Grid.ColumnSpan="3" Grid.Column="0" Content="OK" Click="OKButton_Click" TabIndex="1" IsDefault="True"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

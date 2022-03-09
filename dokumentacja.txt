@@ -1,0 +1,2 @@
+Program obsługiwany jest wyłącznie za pomocą lewego przycisku myszy.
+W celu przesunięcia wierzchołka należy złapać bardzo blisko wierzchołka i zacząć go przesuwać.
